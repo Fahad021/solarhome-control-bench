@@ -52,7 +52,7 @@ def load_data(ndays=30, subset='test', keep_date=False):
 
     # Load data file
     p_dat1112 = Path(__file__).parent.parent / 'data' / 'data_2011-2012.csv'
-    assert p_dat1112.exists(), 'data file {} not found!'.format(p_dat1112)
+    assert p_dat1112.exists(), f'data file {p_dat1112} not found!'
     df = pd.read_csv(p_dat1112,
                      index_col=0,
                      parse_dates=True)
@@ -118,21 +118,21 @@ def load_results(folder, name):
     traj_fname = folder / f'{name}_traj.csv'
 
     # Metadata
-    assert meta_fname.exists(), 'metadata file {} not found!'.format(meta_fname)
+    assert meta_fname.exists(), f'metadata file {meta_fname} not found!'
     c = pd.read_csv(meta_fname)
     assert len(c) == 1
     meta = c.iloc[0].to_dict()
     # meta.name = None
 
     # Statistics:
-    assert stat_fname.exists(), 'statistics file {} not found!'.format(stat_fname)
+    assert stat_fname.exists(), f'statistics file {stat_fname} not found!'
     c = pd.read_csv(stat_fname)
     assert len(c) == 1
     stats = c.iloc[0]  # .to_dict()
     stats.name = None
 
     # Time series (trajectories)
-    assert traj_fname.exists(), 'statistics file {} not found!'.format(traj_fname)
+    assert traj_fname.exists(), f'statistics file {traj_fname} not found!'
     traj = pd.read_csv(traj_fname, index_col=0)
 
     return meta, stats, traj
@@ -198,10 +198,10 @@ def save_results(name, params, stats, traj):
         ]
         # Check columns of `traj` DataFrame
         for h1, h2 in zip(traj_header[1:], traj):
-            assert h1 == h2, '{} != {}'.format(h1, h2)
+            assert h1 == h2, f'{h1} != {h2}'
         traj.to_csv(f, sep=',', header=True, index=True)
 
-    print('result files for method \'{}\' written!'.format(name))
+    print(f"result files for method \'{name}\' written!")
 
 
 def compute_stats(traj):
@@ -216,18 +216,17 @@ def compute_stats(traj):
     -------
     stats: dict
     """
-    s = {
-        'P_sto'    : np.mean(traj['P_sto'])*24,
-        'P_load_sp': np.mean(traj['P_load_sp'])*24,
-        'P_shed'   : np.mean(traj['P_shed'])*24,
-        'P_load'   : np.mean(traj['P_load'])*24,
-        'P_sun'    : np.mean(traj['P_sun'])*24,
-        'P_curt'   : np.mean(traj['P_curt'])*24,
-        'P_pv'     : np.mean(traj['P_pv'])*24,
-        'P_grid'   : np.mean(traj['P_grid'])*24,
-        'C_grid'   : np.mean(traj['P_grid'] * traj['c_grid'])*24,
+    return {
+        'P_sto': np.mean(traj['P_sto']) * 24,
+        'P_load_sp': np.mean(traj['P_load_sp']) * 24,
+        'P_shed': np.mean(traj['P_shed']) * 24,
+        'P_load': np.mean(traj['P_load']) * 24,
+        'P_sun': np.mean(traj['P_sun']) * 24,
+        'P_curt': np.mean(traj['P_curt']) * 24,
+        'P_pv': np.mean(traj['P_pv']) * 24,
+        'P_grid': np.mean(traj['P_grid']) * 24,
+        'C_grid': np.mean(traj['P_grid'] * traj['c_grid']) * 24,
     }
-    return s
 
 
 def pprint_stats(stats):
